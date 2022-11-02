@@ -3,7 +3,7 @@ import { Box } from 'components/Box';
 import { useSelector, useDispatch } from "react-redux";
 import { Input } from 'components/ContactForm/ContactForm.styled';
 import { setFilter } from 'redux/filterSlice/slice';
-import { getFilter } from 'redux/selectors';
+import { selectFilter } from 'redux/selectors';
 
 const Filter = () => {
     const dispatch = useDispatch();
@@ -11,7 +11,7 @@ const Filter = () => {
     const handleInputName = (evt) => {
         dispatch(setFilter(evt.target.value))
     };
-    const filter = useSelector(getFilter)
+    const filter = useSelector(selectFilter)
 
     return (<Box
         display="flex"

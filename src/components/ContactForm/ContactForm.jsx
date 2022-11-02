@@ -1,16 +1,17 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import shortid from "shortid";
 import { useState } from "react";
 import { Box } from 'components/Box';
 import { Input, AddButton } from './ContactForm.styled';
-import { add } from "redux/contactsSlice/slice";
+// import { add } from "redux/contactsSlice/slice";
 import { useSelector, useDispatch } from "react-redux";
-import { getContacts } from 'redux/selectors';
+import { selectContacts } from 'redux/selectors';
+import { addContact } from 'redux/operations';
+
 
 const ContactForm = () => {
     
     const [name, setName] = useState('');
-    const [number, setNumber] = useState('');
+    const [phone, setPhone] = useState('');
 
     const handleInputChange = e => {
         const { name, value } = e.target;
@@ -20,27 +21,26 @@ const ContactForm = () => {
                 break;
         
             case "number":
-                setNumber(value)
+                setPhone(value)
                 break;
             default:
                 return;
         }
     };
     const dispatch = useDispatch();
-    const contacts = useSelector(getContacts);
+    const contacts = useSelector(selectContacts);
 
-    const onSubmitContact = ({ name, number }) => {
+    const onSubmitContact = ({ name, phone }) => {
   
         const newContact = {
-            id: shortid.generate(),
             name,
-            number,
+            phone,
         };
         const isContactExists = contacts.find(({ name }) => newContact.name.toLocaleLowerCase() === name.toLocaleLowerCase());
-       
+        console.log(newContact)
         isContactExists
             ? Notify.failure(`${newContact.name} is already in contacts`) :
-            dispatch(add(newContact));
+            dispatch(addContact(newContact));
         if (!isContactExists) {
             resetForm()
         };
@@ -49,12 +49,12 @@ const ContactForm = () => {
     const onClickSubmit = (evt) => {
         evt.preventDefault();
         
-        onSubmitContact({ name, number });
+        onSubmitContact({ name, phone });
     };
 
     const resetForm = () => {
         setName("");
-        setNumber("");
+        setPhone("");
     };
   
     return (
@@ -84,7 +84,7 @@ const ContactForm = () => {
                         <Input
                             type="tel"
                             name="number"
-                            value={number}
+                            value={phone}
                             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
                             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
                             onChange={handleInputChange}
